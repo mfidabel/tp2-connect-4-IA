@@ -1,23 +1,51 @@
-import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Container, Row} from "react-bootstrap";
+import {Parametros} from "./componentes/Parametros";
+
+const algoritmos = ["Minimax", "RLAgent", "Banana"]
 
 function App() {
+  // Variables
+
+
+  // Handlers
+  const iniciarJuego = (parametros) => {
+    // Do something
+  }
+
+  const limpiarTablero = () => {
+    // Do something
+  }
+
+
+  // Render
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App p-3">
+      <Container>
+        <h3 className="text-start h2 mb-3">Connect-4</h3>
+        {/* Parametros*/}
+        <hr/>
+        <h4>Parámetros del problema</h4>
+        <Row className="mt-3">
+          <Parametros
+              onIniciarJuego={iniciarJuego}
+              onLimpiarTablero={limpiarTablero}
+              algoritmos={algoritmos}/>
+        </Row>
+        {/* Tablero */}
+        <hr/>
+        <h4>Tablero</h4>
+        <Row className="mt-3">
+          {/* Aca poner el tablero*/}
+        </Row>
+        {/* Resultados */}
+        <hr/>
+        <h4>Resultados</h4>
+        <Row className="mt-3">
+          {/* Aca poner los Resultados */}
+        </Row>
+      </Container>
     </div>
   );
 }
