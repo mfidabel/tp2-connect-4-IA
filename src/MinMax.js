@@ -1,17 +1,15 @@
 const prompt = require('prompt-sync')();
 
-class RLAgent {
+class MinMax {
     constructor(n) {
         this.n = n;
-        this.reset(true);
+        this.reset();
         this.jugadorAgente = 1;
         this.turnosMaximos = 42;
     }
 
-    reset(entrenar) {
+    reset() {
         this.tablero = Array(6).fill().map(()=>Array(7).fill(0));
-        this.lastTablero = Array(6).fill().map(()=>Array(7).fill(0));
-        this.entrenar = entrenar;
         this.gameResult = 0;
     }
 
@@ -71,7 +69,7 @@ class RLAgent {
                 anterior = actual;
             }
         }
-        
+
         // quedan espacios vacios, no hay ganador
         for (let i = 0; i < tablero[0].length; i++) {
             if (tablero[0][i] == 0 || tablero[tablero.length-1][i] == 0)
@@ -83,83 +81,109 @@ class RLAgent {
     }
 
     calculateReward(tablero, jugador) {
-        let conecta;
-        let libre;
         let count = Array(3).fill(0);
 
         // recorre el tablero horizonalmente
         for (let i = 0; i < tablero.length; i++) {
-            libre = false;
-            conecta = 0;
+            let libre = false;
+            let conecta = 0;
+            let anterior = -1;
             for (let j = 0; j < tablero[0].length; j++) {
                 let actual = tablero[i][j];
-                if (actual == jugador) {
+                if (actual == anterior && actual != 0) {
                     conecta++;
                 } else {
                     if ((libre || actual == 0) && conecta > 0) {
-                        if (conecta > 3) return Number.MAX_SAFE_INTEGER;
-                        count[conecta-1]++;
+                        if (actual == jugador) {
+                            if (conecta > 3) return Number.MAX_SAFE_INTEGER;
+                            count[conecta-1]++;
+                        } else {
+                            if (conecta > 3) return Number.MIN_SAFE_INTEGER;
+                            count[conecta-1]--;
+                        }
                     }
                     libre = actual == 0;
                     conecta = 0;
                 }
+                anterior = actual;
             }
         }
 
         // recorre el tablero verticalmente
         for (let i = 0; i < tablero[0].length; i++) {
-            libre = false;
-            conecta = 0;
+            let libre = false;
+            let conecta = 0;
+            let anterior = -1;
             for (let j = 0; j < tablero.length; j++) {
                 let actual = tablero[j][i];
-                if (actual == jugador) {
+                if (actual == anterior && actual != 0) {
                     conecta++;
                 } else {
                     if ((libre || actual == 0) && conecta > 0) {
-                        if (conecta > 3) return Number.MAX_SAFE_INTEGER;
-                        count[conecta-1]++;
+                        if (actual == jugador) {
+                            if (conecta > 3) return Number.MAX_SAFE_INTEGER;
+                            count[conecta-1]++;
+                        } else {
+                            if (conecta > 3) return Number.MIN_SAFE_INTEGER;
+                            count[conecta-1]--;
+                        }
                     }
                     libre = actual == 0;
                     conecta = 0;
                 }
+                anterior = actual;
             }
         }
 
         // recorre la diagonal secundaria
         for (let i = 3; i < tablero.length + tablero[0].length - 4; i++) {
-            libre = false;
-            conecta = 0;
+            let libre = false;
+            let conecta = 0;
+            let anterior = -1;
             for (let j = Math.max(0, i - tablero.length + 1); j < Math.min(i+1, tablero[0].length); j++) {
                 let actual = tablero[i-j][j];
-                if (actual == jugador) {
+                if (actual == anterior && actual != 0) {
                     conecta++;
                 } else {
                     if ((libre || actual == 0) && conecta > 0) {
-                        if (conecta > 3) return Number.MAX_SAFE_INTEGER;
-                        count[conecta-1]++;
+                        if (actual == jugador) {
+                            if (conecta > 3) return Number.MAX_SAFE_INTEGER;
+                            count[conecta-1]++;
+                        } else {
+                            if (conecta > 3) return Number.MIN_SAFE_INTEGER;
+                            count[conecta-1]--;
+                        }
                     }
                     libre = actual == 0;
                     conecta = 0;
                 }
+                anterior = actual;
             }
         }
 
         // recorre la diagonal primaria
         for (let i = 3; i < tablero.length + tablero[0].length - 4; i++) {
-            libre = false;
-            conecta = 0;
+            let libre = false;
+            let conecta = 0;
+            let anterior = -1;
             for (let j = Math.max(0, i - tablero.length + 1); j < Math.min(i+1, tablero[0].length); j++) {
                 let actual = tablero[tablero.length-1-i+j][j];
-                if (actual == jugador) {
+                if (actual == anterior && actual != 0) {
                     conecta++;
                 } else {
                     if ((libre || actual == 0) && conecta > 0) {
-                        if (conecta > 3) return Number.MAX_SAFE_INTEGER;
-                        count[conecta-1]++;
+                        if (actual == jugador) {
+                            if (conecta > 3) return Number.MAX_SAFE_INTEGER;
+                            count[conecta-1]++;
+                        } else {
+                            if (conecta > 3) return Number.MIN_SAFE_INTEGER;
+                            count[conecta-1]--;
+                        }
                     }
                     libre = actual == 0;
                     conecta = 0;
                 }
+                anterior = actual;
             }
         }
 
@@ -181,6 +205,7 @@ class RLAgent {
 
             this.tablero[i][j] = jugador;
             prob = this.minValue(this.tablero, jugador, this.n);
+
             if (prob > maxProb) {
                 maxProb = prob;
                 columna = j;
@@ -197,6 +222,9 @@ class RLAgent {
     maxValue(tablero, jugador, n) {
 
         if (n == 0) return this.calculateReward(tablero, jugador);
+        let resultado = this.calculateResult(this.tablero);
+        if (resultado == jugador) return Number.MAX_SAFE_INTEGER;
+        else if (resultado == (jugador % 2) + 1) return Number.MIN_SAFE_INTEGER;
 
         let prob, columna;
         let maxProb = Number.MIN_SAFE_INTEGER;
@@ -222,7 +250,9 @@ class RLAgent {
     minValue(tablero, jugador, n) {
 
         if (n == 0) return this.calculateReward(tablero, jugador);
-        let oponente = (jugador % 2) + 1;
+        let resultado = this.calculateResult(this.tablero);
+        if (resultado == jugador) return Number.MAX_SAFE_INTEGER;
+        else if (resultado == (jugador % 2) + 1) return Number.MIN_SAFE_INTEGER;
 
         let prob, columna;
         let minProb = Number.MAX_SAFE_INTEGER;
@@ -233,7 +263,7 @@ class RLAgent {
             let i = this.tablero.length-1;
             while (i > 0 && this.tablero[i-1][j] == 0) i--;
 
-            this.tablero[i][j] = oponente;
+            this.tablero[i][j] = (jugador % 2) + 1;
             prob = this.maxValue(this.tablero, jugador, n-1);
             if (prob < minProb) {
                 minProb = prob;
@@ -260,7 +290,6 @@ class RLAgent {
             const prompt = require('prompt-sync')();
             console.log(columnas);
             columna = parseInt(prompt('Cual es su jugada? '));
-            console.log(columna);
         } while (!(columna in columnas));
         
         // aplicar jugada
@@ -312,6 +341,6 @@ class RLAgent {
 }
 
 let profundidad = 4;
-ag = new RLAgent(profundidad);
-ag.reset(true);
+ag = new MinMax(profundidad);
+ag.reset();
 ag.jugarVsHumano();
