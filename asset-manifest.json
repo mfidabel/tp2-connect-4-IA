@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/tp2-connect-4-IA/static/css/main.68dbe11e.chunk.css",
+    "main.js": "/tp2-connect-4-IA/static/js/main.7e11e36b.chunk.js",
+    "main.js.map": "/tp2-connect-4-IA/static/js/main.7e11e36b.chunk.js.map",
+    "runtime-main.js": "/tp2-connect-4-IA/static/js/runtime-main.62a520fa.js",
+    "runtime-main.js.map": "/tp2-connect-4-IA/static/js/runtime-main.62a520fa.js.map",
+    "static/css/2.818011ed.chunk.css": "/tp2-connect-4-IA/static/css/2.818011ed.chunk.css",
+    "static/js/2.c95511b1.chunk.js": "/tp2-connect-4-IA/static/js/2.c95511b1.chunk.js",
+    "static/js/2.c95511b1.chunk.js.map": "/tp2-connect-4-IA/static/js/2.c95511b1.chunk.js.map",
+    "static/js/3.cbc58c7c.chunk.js": "/tp2-connect-4-IA/static/js/3.cbc58c7c.chunk.js",
+    "static/js/3.cbc58c7c.chunk.js.map": "/tp2-connect-4-IA/static/js/3.cbc58c7c.chunk.js.map",
+    "index.html": "/tp2-connect-4-IA/index.html",
+    "static/css/2.818011ed.chunk.css.map": "/tp2-connect-4-IA/static/css/2.818011ed.chunk.css.map",
+    "static/css/main.68dbe11e.chunk.css.map": "/tp2-connect-4-IA/static/css/main.68dbe11e.chunk.css.map",
+    "static/js/2.c95511b1.chunk.js.LICENSE.txt": "/tp2-connect-4-IA/static/js/2.c95511b1.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.62a520fa.js",
+    "static/css/2.818011ed.chunk.css",
+    "static/js/2.c95511b1.chunk.js",
+    "static/css/main.68dbe11e.chunk.css",
+    "static/js/main.7e11e36b.chunk.js"
+  ]
+}
