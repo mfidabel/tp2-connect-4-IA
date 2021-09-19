@@ -1,4 +1,6 @@
+import {Estrategia} from "./estrategia";
+
 export default class configuracionParametros {
-    jugadorRojo: string = "";
-    jugadorAmarillo: string = "";
+    estrategia: Estrategia = Estrategia.Minimax;
+    nivel: number = 3;
 }

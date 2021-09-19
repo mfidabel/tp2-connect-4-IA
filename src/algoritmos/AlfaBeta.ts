@@ -1,8 +1,8 @@
 import Tablero from "../modelos/tablero";
-import {Resultado} from "../modelos/resultado";
 import {Ficha} from "../modelos/ficha";
+import {Resultado} from "../modelos/resultado";
 
-export default class MinMax {
+export default class AlfaBeta {
     n: number
     tablero: Tablero = new Tablero();
     jugadorAgente = Ficha.Rojo;
@@ -141,7 +141,7 @@ export default class MinMax {
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
             this.tablero.posiciones[i][j] = jugador;
-            prob = this.minValue(this.tablero, jugador, this.n);
+            prob = this.minValue(this.tablero, jugador, this.n, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
 
             if (prob > maxProb) {
                 maxProb = prob;
@@ -156,7 +156,7 @@ export default class MinMax {
         this.tablero.posiciones[fila][columna] = jugador;
     }
 
-    maxValue(tablero: Tablero, jugador: Ficha, n: number): number {
+    maxValue(tablero: Tablero, jugador: Ficha, n: number, alfa: number, beta: number): number {
         if (n === 0) return this.calcularF(tablero, jugador);
         let resultado = tablero.calcularResultado();
         if (resultado.valueOf() === jugador.valueOf()) return Number.MAX_SAFE_INTEGER;
@@ -172,18 +172,22 @@ export default class MinMax {
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
             this.tablero.posiciones[i][j] = jugador;
-            prob = this.minValue(this.tablero, jugador, n - 1);
+            prob = this.minValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob > maxProb) {
                 maxProb = prob;
                 //columna = j;
             }
             this.tablero.posiciones[i][j] = Ficha.Vacio;
+
+            // Podar
+            if (maxProb >= beta) return maxProb;
+            if (maxProb > alfa) alfa = maxProb;
         }
 
         return maxProb;
     }
 
-    minValue(tablero: Tablero, jugador: Ficha, n: number): number {
+    minValue(tablero: Tablero, jugador: Ficha, n: number, alfa: number, beta: number): number {
         if (n === 0) return this.calcularF(tablero, jugador);
         let resultado = tablero.calcularResultado();
         if (resultado.valueOf() === jugador.valueOf()) return Number.MAX_SAFE_INTEGER;
@@ -199,12 +203,15 @@ export default class MinMax {
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
             this.tablero.posiciones[i][j] = (jugador % 2) + 1;
-            prob = this.maxValue(this.tablero, jugador, n - 1);
+            prob = this.maxValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob < minProb) {
                 minProb = prob;
                 //columna = j;
             }
             this.tablero.posiciones[i][j] = Ficha.Vacio;
+
+            if (minProb <= alfa) return minProb;
+            if (minProb < beta) beta = minProb;
         }
 
         return minProb;

@@ -66,3 +66,15 @@
 .Vacio {
 
 }
+
+.mensajeGanador {
+  margin: 20px;
+  font-size: 0;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.18, 0.99, 0.8, 1.17);
+}
+
+.aparecer {
+  opacity: 1;
+  font-size: 20pt;
+}

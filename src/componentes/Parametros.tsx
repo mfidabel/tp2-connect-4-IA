@@ -1,24 +1,24 @@
 import React, {useState} from "react";
 import configuracionParametros from "../modelos/configuracionParametros";
 import {Button, Col, Form, Row} from "react-bootstrap";
+import {Estrategia} from "../modelos/estrategia";
 
 type ParametrosProps = {
-    algoritmos: string[],
-    onIniciarJuego: (parametros: configuracionParametros) => void,
+    onElegirEstrategia: (parametros: configuracionParametros) => void,
     onLimpiarTablero: () => void
 }
 
-export const Parametros = ({algoritmos, onIniciarJuego, onLimpiarTablero}: ParametrosProps) => {
+export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosProps) => {
     // Variables
-    const [rojo, setRojo] = useState('');
-    const [amarillo, setAmarillo] = useState('');
+    const [estrategia, setEstrategia] = useState(Estrategia.Minimax);
+    const [nivel, setNivel] = useState(3);
 
     // Handlers
-    const clickIniciarJuego = () => {
+    const elegirEstrategia = () => {
         // Iniciar el juego
-        onIniciarJuego({
-            jugadorAmarillo: amarillo,
-            jugadorRojo: rojo
+        onElegirEstrategia({
+            estrategia: estrategia,
+            nivel: nivel,
         });
     }
 
@@ -33,31 +33,29 @@ export const Parametros = ({algoritmos, onIniciarJuego, onLimpiarTablero}: Param
             <Row>
                 <Col>
                     <Form.Group className="mb-3">
-                        <Form.Label>Jugador Rojo</Form.Label>
+                        <Form.Label>Estrategia</Form.Label>
                         <Form.Select
-                            value={rojo}
-                            onChange={ (event) => setRojo(event.currentTarget.value) }>
-                            {
-                                algoritmos.map(value => <option key={value}>{value}</option>)
-                            }
+                            value={estrategia}
+                            onChange={ (event) => setEstrategia(parseInt(event.currentTarget.value)) }>
+                            <option value={Estrategia.Minimax}>Minimax</option>
+                            <option value={Estrategia.Alfabeta}>Poda Alfa-beta</option>
+                            <option value={Estrategia.RLAgent}>Agente RL</option>
                         </Form.Select>
                     </Form.Group>
                 </Col>
                 <Col>
                     <Form.Group className="mb-3">
-                        <Form.Label>Jugador Amarillo</Form.Label>
-                        <Form.Select value={amarillo} onChange={ event => setAmarillo(event.currentTarget.value) }>
-                            {
-                                algoritmos.map(value => <option key={value}>{value}</option>)
-                            }
-                        </Form.Select>
+                        <Form.Label>Nivel de búsqueda</Form.Label>
+                        <Form.Control value={nivel}
+                                      type="number"
+                                      onChange={ event => setNivel(parseInt(event.currentTarget.value))}/>
                     </Form.Group>
                 </Col>
             </Row>
             <Row>
                 <Col>
                     <Button variant="primary"
-                            onClick={clickIniciarJuego}>Iniciar Juego</Button>
+                            onClick={elegirEstrategia}>Elegir Estrategia</Button>
                     <Button variant="secondary"
                             onClick={clickLimpiarTablero}
                             className="ms-3">Limpiar Tablero</Button>
