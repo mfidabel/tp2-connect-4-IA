@@ -3,21 +3,21 @@ import {Estrategia} from "../modelos/estrategia";
 import {Ficha} from "../modelos/ficha";
 import configuracionParametros from "../modelos/configuracionParametros";
 import MinMax from "./MinMax";
+import AlfaBeta from "./AlfaBeta";
 
 export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParametros, jugador: Ficha): Tablero => {
     const nuevoTablero = new Tablero();
     nuevoTablero.posiciones = JSON.parse(JSON.stringify(tablero.posiciones)); // Copiar posiciones
 
     // Seleccionar estrategia
-    let agente: MinMax;
+    let agente: MinMax | AlfaBeta;
 
     switch (parametros.estrategia) {
         case Estrategia.Minimax:
             agente = new MinMax(parametros.nivel);
             break
         case Estrategia.Alfabeta:
-            // TODO: Alfabeta
-            agente = new MinMax(parametros.nivel);
+            agente = new AlfaBeta(parametros.nivel);
             break
         case Estrategia.RLAgent:
             // TODO: RL Agent
