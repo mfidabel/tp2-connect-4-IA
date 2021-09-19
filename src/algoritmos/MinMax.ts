@@ -162,7 +162,7 @@ export default class MinMax {
         if (resultado.valueOf() === jugador.valueOf()) return Number.MAX_SAFE_INTEGER;
         else if (resultado.valueOf() === (jugador % 2) + 1) return Number.MIN_SAFE_INTEGER;
 
-        let prob, columna;
+        let prob;
         let maxProb = Number.MIN_SAFE_INTEGER;
 
         // elegir fila disponible con max reward
@@ -175,7 +175,7 @@ export default class MinMax {
             prob = this.minValue(this.tablero, jugador, n - 1);
             if (prob > maxProb) {
                 maxProb = prob;
-                columna = j;
+                //columna = j;
             }
             this.tablero.posiciones[i][j] = Ficha.Vacio;
         }
@@ -189,7 +189,7 @@ export default class MinMax {
         if (resultado.valueOf() === jugador.valueOf()) return Number.MAX_SAFE_INTEGER;
         else if (resultado === (jugador % 2) + 1) return Number.MIN_SAFE_INTEGER;
 
-        let prob = 0, columna = 0;
+        let prob = 0;
         let minProb = Number.MAX_SAFE_INTEGER;
 
         // elegir fila disponible con min reward
@@ -202,7 +202,7 @@ export default class MinMax {
             prob = this.maxValue(this.tablero, jugador, n - 1);
             if (prob < minProb) {
                 minProb = prob;
-                columna = j;
+                //columna = j;
             }
             this.tablero.posiciones[i][j] = Ficha.Vacio;
         }

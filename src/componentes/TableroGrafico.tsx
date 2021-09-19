@@ -1,9 +1,11 @@
 // Basado en https://github.com/Cono52/connect-four-react
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Ficha} from "../modelos/ficha";
 import Tablero from "../modelos/tablero";
 import {Modo} from "../modelos/modo";
 import {Resultado} from "../modelos/resultado";
+import configuracionParametros from "../modelos/configuracionParametros";
+import {jugarEstrategia} from "../algoritmos/jugadorEstrategia";
 
 type AgujeroProps = {
     fichaValor: Ficha
@@ -13,6 +15,10 @@ type ColumnaProps = {
     handleClick: () => void,
     agujeros: Ficha[]
 };
+
+type TableroProps = {
+    parametros: configuracionParametros,
+}
 
 const Agujero = ({fichaValor}: AgujeroProps) => {
     return (
@@ -37,15 +43,22 @@ const Columna = ({handleClick, agujeros}: ColumnaProps) => {
 };
 
 
-export const TableroGrafico = () => {
+export const TableroGrafico = ({parametros}: TableroProps) => {
+    // Constantes
+    const FICHA_ESTRATEGIA = Ficha.Amarillo;
+    const FICHA_HUMANO = Ficha.Rojo;
+
+    // Estados
     const [tablero, setTablero] = useState(new Tablero());
     const [turno, setTurno] = useState(Ficha.Rojo);
     const [modo, setModo] = useState(Modo.SinSeleccionar);
+    const [ganador, setGanador] = useState('');
 
     // Función para seleccionar modo
     const seleccionarModo = (modo: Modo) => {
-        setTablero(new Tablero());
         setModo(modo);
+        setTablero(new Tablero());
+        setTurno(Ficha.Rojo);
     }
 
     // Función para hacer un movimiento
@@ -68,6 +81,36 @@ export const TableroGrafico = () => {
                  key={i}/>
     ));
 
+    // Crear estilo del ganador
+    let estiloGanador = ganador !== '' ? "mensajeGanador aparecer" : "mensajeGanador";
+
+    // Ejecutar cuando se cambia de turno
+    useEffect(() => {
+        let ganadorTentador = tablero.calcularResultado();
+        switch (ganadorTentador) {
+            case Resultado.Empate:
+                setGanador("ninguno");
+                break;
+            case Resultado.GanadorRojo:
+                setGanador("Rojo");
+                break;
+            case Resultado.GanadorAmarillo:
+                setGanador("Amarillo");
+                break;
+            case Resultado.SinGanador:
+            // El juego continua, el siguiente jugador hace su movimiento si es una estrategia
+            // TODO: Jugar estrategia
+                if (modo === Modo.Estrategia && turno === FICHA_ESTRATEGIA) {
+                    // Jugar estrategia
+                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno);
+                    setTablero(nuevoTablero);
+                    setTurno(FICHA_HUMANO);
+                }
+
+        }
+        // eslint-disable-next-line
+    }, [turno, tablero]);
+
     return (
         <div className="TableroGrafico">
             {modo !== Modo.SinSeleccionar &&
@@ -77,13 +120,11 @@ export const TableroGrafico = () => {
             }
             {(modo === Modo.SinSeleccionar) &&
             <div>
-                <button onClick={() => seleccionarModo(Modo.Humano)}>Jugar Humano</button>
-                <button>Jugar Estrategia</button>
+                <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Humano)}>Jugar Humano</button>
+                <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Estrategia)}>Jugar Estrategia</button>
             </div>
             }
-            {
-                // TODO: Poner algo para cuando termine el juego
-            }
+            <div className={estiloGanador}>Gana {ganador}!</div>
         </div>
     );
 };

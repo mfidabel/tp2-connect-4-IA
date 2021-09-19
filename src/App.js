@@ -3,16 +3,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Row} from "react-bootstrap";
 import {Parametros} from "./componentes/Parametros";
 import {TableroGrafico} from "./componentes/TableroGrafico";
+import {useState} from "react";
+import configuracionParametros from "./modelos/configuracionParametros";
 
 const algoritmos = ["Minimax", "RLAgent", "Banana"]
 
 function App() {
   // Variables
+  const [parametros, setParametros] = useState(new configuracionParametros());
 
 
   // Handlers
-  const iniciarJuego = (parametros) => {
+  const cambiarParametros = parametros => {
     // Do something
+    setParametros(parametros);
   }
 
   const limpiarTablero = () => {
@@ -30,7 +34,7 @@ function App() {
         <h4>Parámetros del problema</h4>
         <Row className="mt-3">
           <Parametros
-              onIniciarJuego={iniciarJuego}
+              onElegirEstrategia={cambiarParametros}
               onLimpiarTablero={limpiarTablero}
               algoritmos={algoritmos}/>
         </Row>
@@ -38,7 +42,7 @@ function App() {
         <hr/>
         <h4>Tablero</h4>
         <Row className="mt-3">
-          <TableroGrafico/>
+          <TableroGrafico parametros={parametros}/>
         </Row>
         {/* Resultados */}
         <hr/>
