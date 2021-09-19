@@ -341,6 +341,6 @@ class MinMax {
 }
 
 let profundidad = 4;
-ag = new MinMax(profundidad);
+let ag = new MinMax(profundidad);
 ag.reset();
 ag.jugarVsHumano();

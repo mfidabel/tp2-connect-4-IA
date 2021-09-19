@@ -2,6 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Row} from "react-bootstrap";
 import {Parametros} from "./componentes/Parametros";
+import {TableroGrafico} from "./componentes/TableroGrafico";
 
 const algoritmos = ["Minimax", "RLAgent", "Banana"]
 
@@ -37,7 +38,7 @@ function App() {
         <hr/>
         <h4>Tablero</h4>
         <Row className="mt-3">
-          {/* Aca poner el tablero*/}
+          <TableroGrafico/>
         </Row>
         {/* Resultados */}
         <hr/>
