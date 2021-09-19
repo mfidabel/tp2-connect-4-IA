@@ -22,6 +22,7 @@ export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParam
             break
         case Estrategia.RLAgent:
             agente = RLAgent.Agente;
+            agente.reset(false);
             break
         default:
             agente = new MinMax(parametros.nivel);

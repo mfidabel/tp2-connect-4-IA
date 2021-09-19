@@ -29,6 +29,10 @@ export default class RLAgent {
         this.gameResult = Resultado.SinGanador;
     }
 
+    resetLearning() {
+        this.lookupTable = new Map<string, number>();
+    }
+
     calcularR(tablero: Tablero, jugador: Ficha) {
         let contrario = jugador === Ficha.Rojo ? Ficha.Amarillo : Ficha.Rojo;
 
