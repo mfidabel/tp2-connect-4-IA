@@ -125,7 +125,7 @@ class RLAgent {
 
     jugarElitista(jugador) { // max value
 
-        let prob, columna;
+        let prob, columna = [];
         let maxProb = Number.MIN_SAFE_INTEGER;
         
         // elegir fila disponible con max reward
@@ -138,9 +138,25 @@ class RLAgent {
             prob = this.calculateReward(this.tablero, jugador);
             if (prob > maxProb) {
                 maxProb = prob;
-                columna = j;
+                columna = [j];
+            } else if (prob == maxProb) {
+                columna.push(j);
             }
             this.tablero[i][j] = 0;
+        }
+
+        // rompe empates entre columnas
+        if (columna.length == 1) {
+            columna = columna[0];
+        } else {
+            if (columna.length == 0) {
+                for (let i = 0; i < this.tablero[0].length; i++) {
+                    if (this.tablero[this.tablero.length-1][i] == 0) {
+                        columna.push(i);
+                    }
+                }
+            }
+            columna = columna[Math.floor(Math.random() * columna.length)];
         }
 
         // entrenar
@@ -316,9 +332,9 @@ class RLAgent {
     }
 }
 
-let trainingCount = 10000; //train
-let humanTrainingCount = 0; //train
-let totalGamesCount = 10000; //validation
+let trainingCount = 0; //train
+let humanTrainingCount = 1; //train
+let totalGamesCount = 0; //validation
 let totalExperiments = 1;
 //let qRates[] = [0.1, 0.2, 0.3, 0.4, 0.5];
 let qRates = [0.5];
