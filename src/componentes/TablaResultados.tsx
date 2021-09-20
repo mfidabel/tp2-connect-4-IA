@@ -23,7 +23,7 @@ export const TablaResultados = ({ resultados }: ResultadosProps) => {
             {
                 resultados.map( (resultado, idx) =>
                     <tr key={idx}>
-                        <td>{idx}</td>
+                        <td>{idx + 1}</td>
                         <td>{resultado.n}</td>
                         <td>{Estrategia[resultado.algoritmo]}</td>
                         <td>{resultado.tiempo}</td>

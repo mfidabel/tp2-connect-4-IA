@@ -5,7 +5,7 @@ import {ficha2Resultado, Resultado} from "../modelos/resultado";
 export default class RLAgent {
     // Agente
     static Agente: RLAgent = new RLAgent(10000)
-
+    static AgenteB: RLAgent = new RLAgent(10000)
     // Variables
     n: number;
     tablero: Tablero = new Tablero();
