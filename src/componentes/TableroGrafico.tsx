@@ -4,8 +4,6 @@ import {Ficha} from "../modelos/ficha";
 import Tablero from "../modelos/tablero";
 import {Modo} from "../modelos/modo";
 import {Resultado} from "../modelos/resultado";
-import { Col, Form, Row} from "react-bootstrap";
-import {Estrategia} from "../modelos/estrategia";
 import configuracionParametros from "../modelos/configuracionParametros";
 import {jugarEstrategia} from "../algoritmos/jugadorEstrategia";
 
@@ -49,9 +47,6 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
     // Constantes
     const FICHA_ESTRATEGIA = Ficha.Amarillo;
     const FICHA_HUMANO = Ficha.Rojo;
-	
-	const [estrategia, setEstrategia] = useState(Estrategia.Minimax);
-    const [nivel, setNivel] = useState(3);
 
     // Estados
     const [tablero, setTablero] = useState(new Tablero());
@@ -107,7 +102,7 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             // TODO: Jugar estrategia
                 if (modo === Modo.Estrategia && turno === FICHA_ESTRATEGIA) {
                     // Jugar estrategia
-                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno);
+                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
                     setTablero(nuevoTablero);
                     setTurno(FICHA_HUMANO);
                 }
@@ -115,15 +110,11 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
 				if (modo === Modo.CPU) {
 					if (turno === FICHA_ESTRATEGIA){
 						// Jugar estrategia
-						const nuevoTablero = jugarEstrategia(tablero, parametros, turno);
+						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_HUMANO);
-					} else { // JUGAR FICHA HUMANA COMO SI FUERA ESTRATEGIA
-						const nuevoTablero = jugarEstrategia(tablero, {
-                            estrategia: estrategia,
-                            nivel: nivel,
-                            qRate: parametros.qRate
-                        }, turno);
+					}else{
+						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_ESTRATEGIA);
 					}
@@ -142,36 +133,6 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             }
             {(modo === Modo.SinSeleccionar) &&
             <div>
-				<Form>
-				<Row>
-					<Col>
-						<Row>
-							<Form.Group className="mb-3">
-								<Form.Label>Estrategia</Form.Label>
-								<Form.Select
-									value={estrategia}
-									onChange={ (event) => setEstrategia(parseInt(event.currentTarget.value)) }>
-									<option value={Estrategia.Minimax}>Minimax</option>
-									<option value={Estrategia.Alfabeta}>Poda Alfa-beta</option>
-									<option value={Estrategia.RLAgent}>Agente RL</option>
-								</Form.Select>
-							</Form.Group>
-						</Row>
-					</Col>
-					<Col>
-						<Row>
-							<Form.Group className="mb-3">
-								<Form.Label>Nivel de búsqueda</Form.Label>
-								<Form.Control value={nivel}
-											type="number"
-											onChange={ event => setNivel(parseInt(event.currentTarget.value))}/>
-							</Form.Group>
-						</Row>
-					</Col>
-				</Row>
-			</Form>
-			<p></p>
-			<p></p>
                 <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Humano)}>Jugar Humano</button>
                 <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Estrategia)}>Jugar Estrategia</button>
 				<button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.CPU)}>Estrategia contra Estrategia</button>
