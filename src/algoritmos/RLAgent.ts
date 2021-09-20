@@ -75,7 +75,7 @@ export default class RLAgent {
     }
 
     jugarElitista(jugador: Ficha) {
-        let prob, columna = 0;
+        let prob, columna, columnas = <number[]>[];
         let maxProb = Number.MIN_SAFE_INTEGER;
 
         // elegir fila disponible con max reward
@@ -88,9 +88,25 @@ export default class RLAgent {
             prob = this.calcularR(this.tablero, jugador);
             if (prob > maxProb) {
                 maxProb = prob;
-                columna = j;
+                columnas = [j];
+            } else if (prob == maxProb) {
+                columnas.push(j);
             }
             this.tablero.posiciones[i][j] = 0;
+        }
+
+        // rompe empates entre columnas
+        if (columnas.length == 1) {
+            columna = columnas[0];
+        } else {
+            if (columnas.length == 0) {
+                for (let i = 0; i < this.tablero.posiciones[0].length; i++) {
+                    if (this.tablero.posiciones[this.tablero.posiciones.length-1][i] == 0) {
+                        columnas.push(i);
+                    }
+                }
+            }
+            columna = columnas[Math.floor(Math.random() * columnas.length)];
         }
 
         // entrenar
