@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import configuracionParametros from "../modelos/configuracionParametros";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {Estrategia} from "../modelos/estrategia";
@@ -47,15 +47,18 @@ export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosPro
 	
 	const clickEntrenarAgenteB = () => {
         // Entrenar al agente
-        RLAgent.Agente = new RLAgent(trainNB);
-        RLAgent.Agente.qRate = qRateB;
+        RLAgent.AgenteB = new RLAgent(trainNB);
+        RLAgent.AgenteB.qRate = qRateB;
 
         for (let i=0; i < trainNB; i++) {
-            RLAgent.Agente.reset(true);
-            RLAgent.Agente.updateAlpha(i);
-            RLAgent.Agente.jugarVsRandom();
+            RLAgent.AgenteB.reset(true);
+            RLAgent.AgenteB.updateAlpha(i);
+            RLAgent.AgenteB.jugarVsRandom();
         }
     }
+
+    // eslint-disable-next-line
+    useEffect( elegirEstrategia, [estrategiaA, estrategiaB, nivelA, nivelB, qRateA, qRateB]);
 
     // Render
     return (

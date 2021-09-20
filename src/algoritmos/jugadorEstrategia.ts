@@ -39,7 +39,7 @@ export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParam
 				agente = new AlfaBeta(parametros.nivelB);
 				break
 			case Estrategia.RLAgent:
-				agente = RLAgent.Agente;
+				agente = RLAgent.AgenteB;
 				agente.reset(false);
 				break
 			default:
