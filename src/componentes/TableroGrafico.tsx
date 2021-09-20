@@ -4,6 +4,9 @@ import {Ficha} from "../modelos/ficha";
 import Tablero from "../modelos/tablero";
 import {Modo} from "../modelos/modo";
 import {Resultado} from "../modelos/resultado";
+import {Button, Col, Form, Row} from "react-bootstrap";
+import {Estrategia} from "../modelos/estrategia";
+import RLAgent from "../algoritmos/RLAgent";
 import configuracionParametros from "../modelos/configuracionParametros";
 import {jugarEstrategia} from "../algoritmos/jugadorEstrategia";
 
@@ -18,6 +21,8 @@ type ColumnaProps = {
 
 type TableroProps = {
     parametros: configuracionParametros,
+	onElegirEstrategia: (parametros: configuracionParametros) => void,
+    onLimpiarTablero: () => void
 }
 
 const Agujero = ({fichaValor}: AgujeroProps) => {
@@ -43,10 +48,36 @@ const Columna = ({handleClick, agujeros}: ColumnaProps) => {
 };
 
 
-export const TableroGrafico = ({parametros}: TableroProps) => {
+export const TableroGrafico = ({parametros, onElegirEstrategia, onLimpiarTablero}: TableroProps) => {
     // Constantes
     const FICHA_ESTRATEGIA = Ficha.Amarillo;
     const FICHA_HUMANO = Ficha.Rojo;
+	
+	const [estrategia, setEstrategia] = useState(Estrategia.Minimax);
+    const [nivel, setNivel] = useState(3);
+    const [qRate, setRate] = useState(0.5);
+    const [trainN, setTrainN] = useState(10000);
+	
+	const elegirEstrategia = () => {
+        // Iniciar el juego
+        onElegirEstrategia({
+            estrategia: estrategia,
+            nivel: nivel,
+            qRate: qRate,
+        });
+    }
+
+    const clickEntrenarAgente = () => {
+        // Entrenar al agente
+        RLAgent.Agente = new RLAgent(trainN);
+        RLAgent.Agente.qRate = qRate;
+
+        for (let i=0; i < trainN; i++) {
+            RLAgent.Agente.reset(true);
+            RLAgent.Agente.updateAlpha(i);
+            RLAgent.Agente.jugarVsRandom();
+        }
+    }
 
     // Estados
     const [tablero, setTablero] = useState(new Tablero());
@@ -102,19 +133,19 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             // TODO: Jugar estrategia
                 if (modo === Modo.Estrategia && turno === FICHA_ESTRATEGIA) {
                     // Jugar estrategia
-                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo, estrategia, nivel);
                     setTablero(nuevoTablero);
                     setTurno(FICHA_HUMANO);
                 }
 				
-				if (modo === Modo.MinMax || modo === Modo.AlfaBeta) {
+				if (modo === Modo.CPU) {
 					if (turno === FICHA_ESTRATEGIA){
 						// Jugar estrategia
-						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo, estrategia, nivel);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_HUMANO);
 					}else{
-						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo, estrategia, nivel);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_ESTRATEGIA);
 					}
@@ -133,10 +164,68 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             }
             {(modo === Modo.SinSeleccionar) &&
             <div>
+				<Form>
+				<Row>
+					<Col>
+						<Row>
+							<Form.Group className="mb-3">
+								<Form.Label>Estrategia</Form.Label>
+								<Form.Select
+									value={estrategia}
+									onChange={ (event) => setEstrategia(parseInt(event.currentTarget.value)) }>
+									<option value={Estrategia.Minimax}>Minimax</option>
+									<option value={Estrategia.Alfabeta}>Poda Alfa-beta</option>
+									<option value={Estrategia.RLAgent}>Agente RL</option>
+								</Form.Select>
+							</Form.Group>
+						</Row>
+						<Row>
+							<Form.Group className="mb-3">
+								<Form.Label>N Entrenamiento (Solo para RL)</Form.Label>
+								<Form.Control value={trainN}
+											type="number"
+											disabled={estrategia !== Estrategia.RLAgent}
+											onChange={ event => setTrainN(parseInt(event.currentTarget.value))}/>
+							</Form.Group>
+						</Row>
+					</Col>
+					<Col>
+						<Row>
+							<Form.Group className="mb-3">
+								<Form.Label>Nivel de búsqueda</Form.Label>
+								<Form.Control value={nivel}
+											type="number"
+											onChange={ event => setNivel(parseInt(event.currentTarget.value))}/>
+							</Form.Group>
+						</Row>
+						<Row>
+							<Form.Group className="mb-3">
+								<Form.Label>Q Rate (Solo para RL)</Form.Label>
+								<Form.Control value={qRate}
+											type="number"
+											max={1.0}
+											disabled={estrategia !== Estrategia.RLAgent}
+											onChange={ event => setRate(parseFloat(event.currentTarget.value))}/>
+							</Form.Group>
+						</Row>
+					</Col>
+				</Row>
+				<Row>
+					<Col>
+						<Button variant="primary"
+								onClick={elegirEstrategia}>Elegir Estrategia</Button>
+						<Button variant="secondary"
+								onClick={clickEntrenarAgente}
+								disabled={estrategia !== Estrategia.RLAgent}
+								className="ms-3">Entrenar RL</Button>
+					</Col>
+				</Row>
+			</Form>
+			<p></p>
+			<p></p>
                 <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Humano)}>Jugar Humano</button>
                 <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Estrategia)}>Jugar Estrategia</button>
-				<button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.MinMax)}>Jugar Contra Minimax</button>
-				<button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.AlfaBeta)}>Jugar Contra Minimax con Poda</button>
+				<button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.CPU)}>Estrategia contra Estrategia</button>
             </div>
             }
             <div className={estiloGanador}>Gana {ganador}!</div>

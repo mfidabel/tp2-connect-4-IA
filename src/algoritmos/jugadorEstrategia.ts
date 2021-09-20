@@ -7,7 +7,7 @@ import MinMax from "./MinMax";
 import AlfaBeta from "./AlfaBeta";
 import RLAgent from "./RLAgent";
 
-export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParametros, jugador: Ficha, modo: Modo): Tablero => {
+export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParametros, jugador: Ficha, modo: Modo, estrategia: Estrategia, nivel: number): Tablero => {
     const nuevoTablero = new Tablero();
     nuevoTablero.posiciones = JSON.parse(JSON.stringify(tablero.posiciones)); // Copiar posiciones
 
@@ -31,15 +31,19 @@ export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParam
 				break
 		}
 	}else{
-		switch (modo) {
-			case Modo.MinMax:
-				agente = new MinMax(3);
+		switch (estrategia) {
+			case Estrategia.Minimax:
+				agente = new MinMax(nivel);
 				break
-			case Modo.AlfaBeta:
-				agente = new AlfaBeta(3);
+			case Estrategia.Alfabeta:
+				agente = new AlfaBeta(nivel);
+				break
+			case Estrategia.RLAgent:
+				agente = RLAgent.Agente;
+				agente.reset(false);
 				break
 			default:
-				agente = new MinMax(3);
+				agente = new MinMax(nivel);
 				break
 		}
 	}
