@@ -194,7 +194,7 @@ class AlfaBeta {
 
     jugarElitistaAlfaBeta(jugador) { // max value
 
-        let prob, columna;
+        let prob, columna = [];
         let maxProb = Number.MIN_SAFE_INTEGER;
         
         // elegir fila disponible con max reward
@@ -208,9 +208,25 @@ class AlfaBeta {
 
             if (prob > maxProb) {
                 maxProb = prob;
-                columna = j;
+                columna = [j];
+            } else if (prob == maxProb) {
+                columna.push(j);
             }
             this.tablero[i][j] = 0;
+        }
+
+        // rompe empates entre columnas
+        if (columna.length == 1) {
+            columna = columna[0];
+        } else {
+            if (columna.length == 0) {
+                for (let i = 0; i < this.tablero[0].length; i++) {
+                    if (this.tablero[this.tablero.length-1][i] == 0) {
+                        columna.push(i);
+                    }
+                }
+            }
+            columna = columna[Math.floor(Math.random() * columna.length)];
         }
 
         // aplicar jugada
