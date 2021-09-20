@@ -4,9 +4,8 @@ import {Ficha} from "../modelos/ficha";
 import Tablero from "../modelos/tablero";
 import {Modo} from "../modelos/modo";
 import {Resultado} from "../modelos/resultado";
-import {Button, Col, Form, Row} from "react-bootstrap";
+import { Col, Form, Row} from "react-bootstrap";
 import {Estrategia} from "../modelos/estrategia";
-import RLAgent from "../algoritmos/RLAgent";
 import configuracionParametros from "../modelos/configuracionParametros";
 import {jugarEstrategia} from "../algoritmos/jugadorEstrategia";
 
@@ -21,8 +20,6 @@ type ColumnaProps = {
 
 type TableroProps = {
     parametros: configuracionParametros,
-	onElegirEstrategia: (parametros: configuracionParametros) => void,
-    onLimpiarTablero: () => void
 }
 
 const Agujero = ({fichaValor}: AgujeroProps) => {
@@ -48,36 +45,13 @@ const Columna = ({handleClick, agujeros}: ColumnaProps) => {
 };
 
 
-export const TableroGrafico = ({parametros, onElegirEstrategia, onLimpiarTablero}: TableroProps) => {
+export const TableroGrafico = ({parametros}: TableroProps) => {
     // Constantes
     const FICHA_ESTRATEGIA = Ficha.Amarillo;
     const FICHA_HUMANO = Ficha.Rojo;
 	
 	const [estrategia, setEstrategia] = useState(Estrategia.Minimax);
     const [nivel, setNivel] = useState(3);
-    const [qRate, setRate] = useState(0.5);
-    const [trainN, setTrainN] = useState(10000);
-	
-	const elegirEstrategia = () => {
-        // Iniciar el juego
-        onElegirEstrategia({
-            estrategia: estrategia,
-            nivel: nivel,
-            qRate: qRate,
-        });
-    }
-
-    const clickEntrenarAgente = () => {
-        // Entrenar al agente
-        RLAgent.Agente = new RLAgent(trainN);
-        RLAgent.Agente.qRate = qRate;
-
-        for (let i=0; i < trainN; i++) {
-            RLAgent.Agente.reset(true);
-            RLAgent.Agente.updateAlpha(i);
-            RLAgent.Agente.jugarVsRandom();
-        }
-    }
 
     // Estados
     const [tablero, setTablero] = useState(new Tablero());
@@ -133,7 +107,7 @@ export const TableroGrafico = ({parametros, onElegirEstrategia, onLimpiarTablero
             // TODO: Jugar estrategia
                 if (modo === Modo.Estrategia && turno === FICHA_ESTRATEGIA) {
                     // Jugar estrategia
-                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo, estrategia, nivel);
+                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno);
                     setTablero(nuevoTablero);
                     setTurno(FICHA_HUMANO);
                 }
@@ -141,11 +115,15 @@ export const TableroGrafico = ({parametros, onElegirEstrategia, onLimpiarTablero
 				if (modo === Modo.CPU) {
 					if (turno === FICHA_ESTRATEGIA){
 						// Jugar estrategia
-						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo, estrategia, nivel);
+						const nuevoTablero = jugarEstrategia(tablero, parametros, turno);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_HUMANO);
-					}else{
-						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo, estrategia, nivel);
+					} else { // JUGAR FICHA HUMANA COMO SI FUERA ESTRATEGIA
+						const nuevoTablero = jugarEstrategia(tablero, {
+                            estrategia: estrategia,
+                            nivel: nivel,
+                            qRate: parametros.qRate
+                        }, turno);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_ESTRATEGIA);
 					}
@@ -179,15 +157,6 @@ export const TableroGrafico = ({parametros, onElegirEstrategia, onLimpiarTablero
 								</Form.Select>
 							</Form.Group>
 						</Row>
-						<Row>
-							<Form.Group className="mb-3">
-								<Form.Label>N Entrenamiento (Solo para RL)</Form.Label>
-								<Form.Control value={trainN}
-											type="number"
-											disabled={estrategia !== Estrategia.RLAgent}
-											onChange={ event => setTrainN(parseInt(event.currentTarget.value))}/>
-							</Form.Group>
-						</Row>
 					</Col>
 					<Col>
 						<Row>
@@ -198,26 +167,6 @@ export const TableroGrafico = ({parametros, onElegirEstrategia, onLimpiarTablero
 											onChange={ event => setNivel(parseInt(event.currentTarget.value))}/>
 							</Form.Group>
 						</Row>
-						<Row>
-							<Form.Group className="mb-3">
-								<Form.Label>Q Rate (Solo para RL)</Form.Label>
-								<Form.Control value={qRate}
-											type="number"
-											max={1.0}
-											disabled={estrategia !== Estrategia.RLAgent}
-											onChange={ event => setRate(parseFloat(event.currentTarget.value))}/>
-							</Form.Group>
-						</Row>
-					</Col>
-				</Row>
-				<Row>
-					<Col>
-						<Button variant="primary"
-								onClick={elegirEstrategia}>Elegir Estrategia</Button>
-						<Button variant="secondary"
-								onClick={clickEntrenarAgente}
-								disabled={estrategia !== Estrategia.RLAgent}
-								className="ms-3">Entrenar RL</Button>
 					</Col>
 				</Row>
 			</Form>
