@@ -142,7 +142,7 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             }
             {(modo === Modo.SinSeleccionar) &&
             <div>
-				<Form>
+				<Form className="estrategia-adversario">
 				<Row>
 					<Col>
 						<Row>
