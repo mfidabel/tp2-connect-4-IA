@@ -102,9 +102,22 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             // TODO: Jugar estrategia
                 if (modo === Modo.Estrategia && turno === FICHA_ESTRATEGIA) {
                     // Jugar estrategia
-                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno);
+                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
                     setTablero(nuevoTablero);
                     setTurno(FICHA_HUMANO);
+                }
+				
+				if (modo === Modo.MinMax || modo === Modo.AlfaBeta) {
+					if (turno === FICHA_ESTRATEGIA){
+						// Jugar estrategia
+						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+						setTablero(nuevoTablero);
+						setTurno(FICHA_HUMANO);
+					}else{
+						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+						setTablero(nuevoTablero);
+						setTurno(FICHA_ESTRATEGIA);
+					}
                 }
 
         }
@@ -122,6 +135,8 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             <div>
                 <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Humano)}>Jugar Humano</button>
                 <button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.Estrategia)}>Jugar Estrategia</button>
+				<button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.MinMax)}>Jugar Contra Minimax</button>
+				<button className="btn btn-primary mx-3" onClick={() => seleccionarModo(Modo.AlfaBeta)}>Jugar Contra Minimax con Poda</button>
             </div>
             }
             <div className={estiloGanador}>Gana {ganador}!</div>

@@ -1,5 +1,8 @@
 export enum Modo {
     SinSeleccionar,
     Humano,
-    Estrategia
+    Estrategia,
+	MinMax,
+	AlfaBeta,
+	RLAgent
 }
