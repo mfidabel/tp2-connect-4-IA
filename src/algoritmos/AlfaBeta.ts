@@ -8,6 +8,7 @@ export default class AlfaBeta {
     jugadorAgente = Ficha.Rojo;
     turnosMaximos = 42;
     gameResult: Resultado = Resultado.SinGanador;
+    expansiones: number = 0;
 
     constructor(n: number) {
         this.n = n;
@@ -131,7 +132,7 @@ export default class AlfaBeta {
     }
 
     jugarElitista(jugador: Ficha): void {
-        let prob = 0, columna = 0, columnas = <number[]>[];
+        let prob = 0, columna = 0, columnas: number[] = [];
         let maxProb = Number.MIN_SAFE_INTEGER;
 
         // Elegir fila disponible con max reward
@@ -146,19 +147,19 @@ export default class AlfaBeta {
             if (prob > maxProb) {
                 maxProb = prob;
                 columnas = [j];
-            } else if (prob == maxProb) {
+            } else if (prob === maxProb) {
                 columnas.push(j);
             }
             this.tablero.posiciones[i][j] = 0;
         }
 
         // Rompe empates entre columnas
-        if (columnas.length == 1) {
+        if (columnas.length === 1) {
             columna = columnas[0];
         } else {
-            if (columnas.length == 0) {
+            if (columnas.length === 0) {
                 for (let i = 0; i < this.tablero.posiciones[0].length; i++) {
-                    if (this.tablero.posiciones[this.tablero.posiciones.length-1][i] == 0) {
+                    if (this.tablero.posiciones[this.tablero.posiciones.length-1][i] === 0) {
                         columnas.push(i);
                     }
                 }
@@ -187,6 +188,7 @@ export default class AlfaBeta {
             let i = this.tablero.posiciones.length - 1;
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
+            this.expansiones++; // Se realiza la expansión
             this.tablero.posiciones[i][j] = jugador;
             prob = this.minValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob > maxProb) {
@@ -218,6 +220,7 @@ export default class AlfaBeta {
             let i = this.tablero.posiciones.length - 1;
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
+            this.expansiones++; // Se realiza la expansión
             this.tablero.posiciones[i][j] = (jugador % 2) + 1;
             prob = this.maxValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob < minProb) {

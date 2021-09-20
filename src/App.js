@@ -5,12 +5,14 @@ import {Parametros} from "./componentes/Parametros";
 import {TableroGrafico} from "./componentes/TableroGrafico";
 import {useState} from "react";
 import configuracionParametros from "./modelos/configuracionParametros";
+import {TablaResultados} from "./componentes/TablaResultados";
 
 const algoritmos = ["Minimax", "RLAgent", "Banana"]
 
 function App() {
   // Variables
   const [parametros, setParametros] = useState(new configuracionParametros());
+  const [resultados, setResultados] = useState([]);
 
 
   // Handlers
@@ -21,6 +23,14 @@ function App() {
 
   const limpiarTablero = () => {
     // Do something
+  }
+
+  const grabarResultado = (resultado) => {
+    setResultados( prevState => {
+      const newState = JSON.parse(JSON.stringify(prevState));
+      newState.push(resultado);
+      return newState;
+    });
   }
 
 
@@ -42,13 +52,13 @@ function App() {
         <hr/>
         <h4>Tablero</h4>
         <Row className="mt-3">
-          <TableroGrafico parametros={parametros}/>
+          <TableroGrafico parametros={parametros} grabarResultado={grabarResultado}/>
         </Row>
         {/* Resultados */}
         <hr/>
         <h4>Resultados</h4>
         <Row className="mt-3">
-          {/* Aca poner los Resultados */}
+          <TablaResultados resultados={resultados}/>
         </Row>
       </Container>
     </div>

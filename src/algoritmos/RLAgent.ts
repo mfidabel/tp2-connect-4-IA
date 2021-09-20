@@ -17,6 +17,7 @@ export default class RLAgent {
     gameResult: Resultado = Resultado.SinGanador;
     lookupTable: Map<string, number> = new Map<string, number>();
     qRate: number = 0.5;
+    expansiones: number = 0;
 
     constructor(n: number) {
         this.n = n;
@@ -27,6 +28,7 @@ export default class RLAgent {
         this.lastTablero = new Tablero();
         this.entrenar = entrenar;
         this.gameResult = Resultado.SinGanador;
+        this.expansiones = 0;
     }
 
     resetLearning() {
@@ -55,6 +57,7 @@ export default class RLAgent {
     }
 
     getProbability(tablero: Tablero): number {
+        this.expansiones++;
         let tableroSerializado = tablero.posiciones.toString();
 
         if (!this.lookupTable.has(tableroSerializado)) {
@@ -73,7 +76,7 @@ export default class RLAgent {
     }
 
     jugarElitista(jugador: Ficha) {
-        let prob, columna, columnas = <number[]>[];
+        let prob, columna, columnas: number[] = [];
         let maxProb = Number.MIN_SAFE_INTEGER;
 
         // elegir fila disponible con max reward
@@ -87,19 +90,19 @@ export default class RLAgent {
             if (prob > maxProb) {
                 maxProb = prob;
                 columnas = [j];
-            } else if (prob == maxProb) {
+            } else if (prob === maxProb) {
                 columnas.push(j);
             }
             this.tablero.posiciones[i][j] = 0;
         }
 
         // rompe empates entre columnas
-        if (columnas.length == 1) {
+        if (columnas.length === 1) {
             columna = columnas[0];
         } else {
-            if (columnas.length == 0) {
+            if (columnas.length === 0) {
                 for (let i = 0; i < this.tablero.posiciones[0].length; i++) {
-                    if (this.tablero.posiciones[this.tablero.posiciones.length-1][i] == 0) {
+                    if (this.tablero.posiciones[this.tablero.posiciones.length-1][i] === 0) {
                         columnas.push(i);
                     }
                 }

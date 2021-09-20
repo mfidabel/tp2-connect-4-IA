@@ -6,7 +6,7 @@ import MinMax from "./MinMax";
 import AlfaBeta from "./AlfaBeta";
 import RLAgent from "./RLAgent";
 
-export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParametros, jugador: Ficha): Tablero => {
+export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParametros, jugador: Ficha): [Tablero, number] => {
     const nuevoTablero = new Tablero();
     nuevoTablero.posiciones = JSON.parse(JSON.stringify(tablero.posiciones)); // Copiar posiciones
 
@@ -35,5 +35,5 @@ export const jugarEstrategia = (tablero: Tablero, parametros: configuracionParam
     // Realizar jugada elitista / validación
     agente.jugarElitista(jugador);
 
-    return agente.tablero;
+    return [agente.tablero, agente.expansiones];
 }
