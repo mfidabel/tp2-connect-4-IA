@@ -17,6 +17,7 @@ export default class RLAgent {
     gameResult: Resultado = Resultado.SinGanador;
     lookupTable: Map<string, number> = new Map<string, number>();
     qRate: number = 0.5;
+    expansiones: number = 0;
 
     constructor(n: number) {
         this.n = n;
@@ -55,6 +56,7 @@ export default class RLAgent {
     }
 
     getProbability(tablero: Tablero): number {
+        this.expansiones++;
         let tableroSerializado = tablero.posiciones.toString();
 
         if (!this.lookupTable.has(tableroSerializado)) {

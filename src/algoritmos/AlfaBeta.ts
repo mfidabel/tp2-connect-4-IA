@@ -8,6 +8,7 @@ export default class AlfaBeta {
     jugadorAgente = Ficha.Rojo;
     turnosMaximos = 42;
     gameResult: Resultado = Resultado.SinGanador;
+    expansiones: number = 0;
 
     constructor(n: number) {
         this.n = n;
@@ -171,6 +172,7 @@ export default class AlfaBeta {
             let i = this.tablero.posiciones.length - 1;
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
+            this.expansiones++; // Se realiza la expansión
             this.tablero.posiciones[i][j] = jugador;
             prob = this.minValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob > maxProb) {
@@ -202,6 +204,7 @@ export default class AlfaBeta {
             let i = this.tablero.posiciones.length - 1;
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
+            this.expansiones++; // Se realiza la expansión
             this.tablero.posiciones[i][j] = (jugador % 2) + 1;
             prob = this.maxValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob < minProb) {

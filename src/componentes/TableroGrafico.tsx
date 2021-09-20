@@ -6,6 +6,9 @@ import {Modo} from "../modelos/modo";
 import {Resultado} from "../modelos/resultado";
 import configuracionParametros from "../modelos/configuracionParametros";
 import {jugarEstrategia} from "../algoritmos/jugadorEstrategia";
+import {ResultadoEjecucion} from "../modelos/ResultadoEjecucion";
+import {Estrategia} from "../modelos/estrategia";
+import RLAgent from "../algoritmos/RLAgent";
 
 type AgujeroProps = {
     fichaValor: Ficha
@@ -18,6 +21,7 @@ type ColumnaProps = {
 
 type TableroProps = {
     parametros: configuracionParametros,
+    grabarResultado: (resultado: ResultadoEjecucion) => void
 }
 
 const Agujero = ({fichaValor}: AgujeroProps) => {
@@ -43,7 +47,7 @@ const Columna = ({handleClick, agujeros}: ColumnaProps) => {
 };
 
 
-export const TableroGrafico = ({parametros}: TableroProps) => {
+export const TableroGrafico = ({parametros, grabarResultado}: TableroProps) => {
     // Constantes
     const FICHA_ESTRATEGIA = Ficha.Amarillo;
     const FICHA_HUMANO = Ficha.Rojo;
@@ -99,12 +103,18 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
                 break;
             case Resultado.SinGanador:
             // El juego continua, el siguiente jugador hace su movimiento si es una estrategia
-            // TODO: Jugar estrategia
                 if (modo === Modo.Estrategia && turno === FICHA_ESTRATEGIA) {
                     // Jugar estrategia
-                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno);
+                    let t0 = performance.now(); // Tiempo de Inicio de algoritmo
+                    const [nuevoTablero, nodos] = jugarEstrategia(tablero, parametros, turno);
+                    let t1 = performance.now(); // Tiempo de Fin de algoritmo
                     setTablero(nuevoTablero);
                     setTurno(FICHA_HUMANO);
+
+                    // Grabar el resultado
+                    let nivel = parametros.estrategia === Estrategia.RLAgent ? RLAgent.Agente.n : parametros.nivel;
+                    const res = new ResultadoEjecucion(nivel, parametros.estrategia, t1-t0, nodos);
+                    grabarResultado(res);
                 }
 
         }
