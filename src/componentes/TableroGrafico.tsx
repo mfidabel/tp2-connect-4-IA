@@ -6,6 +6,7 @@ import {Modo} from "../modelos/modo";
 import {Resultado} from "../modelos/resultado";
 import configuracionParametros from "../modelos/configuracionParametros";
 import {jugarEstrategia} from "../algoritmos/jugadorEstrategia";
+import {ResultadoEjecucion} from "../modelos/ResultadoEjecucion";
 
 type AgujeroProps = {
     fichaValor: Ficha
@@ -18,6 +19,7 @@ type ColumnaProps = {
 
 type TableroProps = {
     parametros: configuracionParametros,
+    grabarResultado: (resultado: ResultadoEjecucion) => void
 }
 
 const Agujero = ({fichaValor}: AgujeroProps) => {
@@ -43,7 +45,7 @@ const Columna = ({handleClick, agujeros}: ColumnaProps) => {
 };
 
 
-export const TableroGrafico = ({parametros}: TableroProps) => {
+export const TableroGrafico = ({parametros, grabarResultado}: TableroProps) => {
     // Constantes
     const FICHA_ESTRATEGIA = Ficha.Amarillo;
     const FICHA_HUMANO = Ficha.Rojo;
@@ -102,21 +104,24 @@ export const TableroGrafico = ({parametros}: TableroProps) => {
             // TODO: Jugar estrategia
                 if (modo === Modo.Estrategia && turno === FICHA_ESTRATEGIA) {
                     // Jugar estrategia
-                    const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+                    const [nuevoTablero, res] = jugarEstrategia(tablero, parametros, turno, modo);
                     setTablero(nuevoTablero);
                     setTurno(FICHA_HUMANO);
+                    grabarResultado(res);
                 }
 				
 				if (modo === Modo.CPU) {
 					if (turno === FICHA_ESTRATEGIA){
 						// Jugar estrategia
-						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+						const [nuevoTablero, res] = jugarEstrategia(tablero, parametros, turno, modo);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_HUMANO);
+                        grabarResultado(res);
 					}else{
-						const nuevoTablero = jugarEstrategia(tablero, parametros, turno, modo);
+						const [nuevoTablero, res] = jugarEstrategia(tablero, parametros, turno, modo);
 						setTablero(nuevoTablero);
 						setTurno(FICHA_ESTRATEGIA);
+                        grabarResultado(res);
 					}
                 }
 
