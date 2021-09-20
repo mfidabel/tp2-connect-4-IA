@@ -28,6 +28,7 @@ export default class RLAgent {
         this.lastTablero = new Tablero();
         this.entrenar = entrenar;
         this.gameResult = Resultado.SinGanador;
+        this.expansiones = 0;
     }
 
     resetLearning() {
