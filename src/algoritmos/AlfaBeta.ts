@@ -141,6 +141,7 @@ export default class AlfaBeta {
             let i = this.tablero.posiciones.length - 1;
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
+            this.expansiones++;
             this.tablero.posiciones[i][j] = jugador;
             prob = this.minValue(this.tablero, jugador, this.n, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
 
@@ -188,7 +189,7 @@ export default class AlfaBeta {
             let i = this.tablero.posiciones.length - 1;
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
-            this.expansiones++; // Se realiza la expansión
+            if (n > 1) this.expansiones++; // Los nodos objetivos no se expanden
             this.tablero.posiciones[i][j] = jugador;
             prob = this.minValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob > maxProb) {
@@ -220,7 +221,7 @@ export default class AlfaBeta {
             let i = this.tablero.posiciones.length - 1;
             while (i > 0 && this.tablero.posiciones[i - 1][j] === Ficha.Vacio) i--;
 
-            this.expansiones++; // Se realiza la expansión
+            if (n > 1) this.expansiones++; // Los nodos objetivos no se expanden
             this.tablero.posiciones[i][j] = (jugador % 2) + 1;
             prob = this.maxValue(this.tablero, jugador, n - 1, alfa, beta);
             if (prob < minProb) {
