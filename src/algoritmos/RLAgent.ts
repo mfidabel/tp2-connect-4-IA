@@ -187,6 +187,32 @@ export default class RLAgent {
         this.alpha = 0.5 - 0.49 * currentGame / this.n;
     }
 
+    selfPlay() {
+        let turno = 1;
+        let jugadas = this.turnosMaximos;
+        let q;
+        do {
+            q = Math.random();
+            if (q <= this.qRate || !this.entrenar) { // en train, juega basado en qrate
+                this.jugarElitista(turno);         // en validation, juega siempre elitista
+            } else {
+                this.jugarRandom(turno);
+            }
+
+            // actualizar resultado
+            this.gameResult = this.tablero.calcularResultado();
+            if (this.gameResult > 0) { // ya hay resultado
+                if (this.gameResult !== ficha2Resultado(turno) && this.entrenar) { // perdimos, actualizar tablero
+                    this.updateProbability(this.lastTablero, this.calcularR(this.tablero, turno), turno);
+                }
+                break;
+            }
+
+            turno = 2 - turno + 1;
+            jugadas--;
+        } while (jugadas > 0);
+    }
+
     jugarVsRandom() {
 
         let jugador = this.jugadorAgente;
