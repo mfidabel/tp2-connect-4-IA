@@ -9,6 +9,7 @@ export const MiniMaxVsAlfaBeta = (totalGamesCount = 100, n_minimax = 3, n_alfabe
     let winsMinimax = 0;
     let winsAlfaBeta = 0;
     let draws = 0;
+    let tiempo = 0;
     let FICHA_MINIMAX = Ficha.Rojo;
     let FICHAS_ALFABETA = Ficha.Amarillo;
 
@@ -18,6 +19,7 @@ export const MiniMaxVsAlfaBeta = (totalGamesCount = 100, n_minimax = 3, n_alfabe
         let turno = inicia
         let agente: MinMax | AlfaBeta;
 
+        let t0 = performance.now();
         do {
             if (turno === FICHA_MINIMAX) {
                 agente = new MinMax(n_minimax);
@@ -33,6 +35,9 @@ export const MiniMaxVsAlfaBeta = (totalGamesCount = 100, n_minimax = 3, n_alfabe
 
             resultado = tablero.calcularResultado();
         } while (resultado === Resultado.SinGanador); // Hasta que termine
+        let t1 = performance.now();
+
+        tiempo += t1-t0;
 
         switch (resultado) {
             case ficha2Resultado(FICHA_MINIMAX):
@@ -50,4 +55,5 @@ export const MiniMaxVsAlfaBeta = (totalGamesCount = 100, n_minimax = 3, n_alfabe
     console.log("Minimax W/T: " + winsMinimax / totalGamesCount);
     console.log("Alfabeta W/T: " + winsAlfaBeta / totalGamesCount);
     console.log("D/T: " + draws / totalGamesCount);
+    console.log("Tiempo Promedio: " + tiempo / totalGamesCount);
 }

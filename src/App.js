@@ -60,6 +60,11 @@ function App() {
         <h4>Resultados</h4>
         <Row className="mt-3">
           <TablaResultados resultados={resultados}/>
+        </Row>
+        {/* Experimentos */}
+        <hr/>
+        <h4>Experimentos</h4>
+        <Row className="mt-3">
           <Experimento/>
         </Row>
       </Container>

@@ -1,9 +1,13 @@
 import RLAgent from "../algoritmos/RLAgent";
 import {ficha2Resultado} from "../modelos/resultado";
+import {Estrategia} from "../modelos/estrategia";
 
-export const RLvsRL = (trainingCount = 10000, humanTrainingCount = 0,
-                       totalGamesCount = 100, totalExperiments = 10,
-                       qRates = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]) => {
+export const MiniMaxVsRL = (trainingCount = 10000,
+                            totalGamesCount = 100,
+                            totalExperiments = 10,
+                            qRates = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+                            nivel = 2,
+                            estrategia: Estrategia.Minimax | Estrategia.Alfabeta = Estrategia.Minimax) => {
 
     for (let q = 0; q < qRates.length; q++) {
 
@@ -22,15 +26,6 @@ export const RLvsRL = (trainingCount = 10000, humanTrainingCount = 0,
                 ag.selfPlay();
             }
 
-            //human train
-            ag.n = humanTrainingCount;
-            ag.alpha = 0.7; //suponemos que el humano juega bien (explotación)
-            for (let i = 0; i < ag.n; i++) {
-                ag.reset(true);
-                //ag.updateAlpha(i);
-                ag.jugarVsHumano();
-            }
-
             if (totalGamesCount === 0) break;
             console.log(">>>>>>>>>>>>>>> AFTER TRAINING ");
 
@@ -38,13 +33,13 @@ export const RLvsRL = (trainingCount = 10000, humanTrainingCount = 0,
             let wins = 0;
             let losses = 0;
             let draws = 0;
-            let contrario = 2 - ag.jugadorAgente + 1;
             let tiempo = 0;
-            for (let i = 0; i < totalGamesCount; i++) {
+            let contrario = 2 - ag.jugadorAgente + 1;
 
+            for (let i = 0; i < totalGamesCount; i++) {
                 let t0 = performance.now();
                 ag.reset(false);
-                ag.jugarVsRandom();
+                ag.jugarVsMinimax(nivel, estrategia);
                 let t1 = performance.now();
 
                 tiempo += t1-t0;
@@ -64,8 +59,8 @@ export const RLvsRL = (trainingCount = 10000, humanTrainingCount = 0,
             tiempoPromAcum += tiempo / totalGamesCount;
         }
         console.log(">>>>>>>>>>>>>>> RATIO AVG, Q RATE: " + qRates[q]);
-        console.log("Ratio Avg W/T: " + winsRatioAcum / totalExperiments);
-        console.log("Ratio Avg L/T: " + lossesRatioAcum / totalExperiments);
+        console.log("Ratio Avg RL W/T: " + winsRatioAcum / totalExperiments);
+        console.log("Ratio Avg MIN/AB W/T: " + lossesRatioAcum / totalExperiments);
         console.log("Ratio Avg D/T: " + drawsRatioAcum / totalExperiments);
         console.log("Ratio Avg Tiempo: " + tiempoPromAcum / totalExperiments);
     }
