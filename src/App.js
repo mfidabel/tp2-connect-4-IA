@@ -6,6 +6,7 @@ import {TableroGrafico} from "./componentes/TableroGrafico";
 import {useState} from "react";
 import configuracionParametros from "./modelos/configuracionParametros";
 import {TablaResultados} from "./componentes/TablaResultados";
+import {Experimento} from "./componentes/Experimento";
 
 const algoritmos = ["Minimax", "RLAgent", "Banana"]
 
@@ -59,6 +60,12 @@ function App() {
         <h4>Resultados</h4>
         <Row className="mt-3">
           <TablaResultados resultados={resultados}/>
+        </Row>
+        {/* Experimentos */}
+        <hr/>
+        <h4>Experimentos</h4>
+        <Row className="mt-3">
+          <Experimento/>
         </Row>
       </Container>
     </div>
