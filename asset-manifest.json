@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/tp2-connect-4-IA/static/css/main.7e55ab92.chunk.css",
-    "main.js": "/tp2-connect-4-IA/static/js/main.5c03e79b.chunk.js",
-    "main.js.map": "/tp2-connect-4-IA/static/js/main.5c03e79b.chunk.js.map",
+    "main.js": "/tp2-connect-4-IA/static/js/main.11926f96.chunk.js",
+    "main.js.map": "/tp2-connect-4-IA/static/js/main.11926f96.chunk.js.map",
     "runtime-main.js": "/tp2-connect-4-IA/static/js/runtime-main.ea7e627a.js",
     "runtime-main.js.map": "/tp2-connect-4-IA/static/js/runtime-main.ea7e627a.js.map",
     "static/css/2.818011ed.chunk.css": "/tp2-connect-4-IA/static/css/2.818011ed.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.818011ed.chunk.css",
     "static/js/2.20a0d0c4.chunk.js",
     "static/css/main.7e55ab92.chunk.css",
-    "static/js/main.5c03e79b.chunk.js"
+    "static/js/main.11926f96.chunk.js"
   ]
 }
