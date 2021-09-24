@@ -45,6 +45,18 @@ export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosPro
         }
     }
 	
+	const clickEntrenarAgentevsEstrategiaA = () => {
+        // Entrenar al agente
+        RLAgent.Agente = new RLAgent(trainNA);
+        RLAgent.Agente.qRate = qRateA;
+
+        for (let i=0; i < trainNA; i++) {
+            RLAgent.Agente.reset(true);
+            RLAgent.Agente.updateAlpha(i);
+            RLAgent.Agente.jugarVsMinimax(estrategiaB, nivelB);
+        }
+    }
+	
 	const clickEntrenarAgenteB = () => {
         // Entrenar al agente
         RLAgent.AgenteB = new RLAgent(trainNB);
@@ -54,6 +66,18 @@ export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosPro
             RLAgent.AgenteB.reset(true);
             RLAgent.AgenteB.updateAlpha(i);
             RLAgent.AgenteB.jugarVsRandom();
+        }
+    }
+	
+	const clickEntrenarAgentevsEstrategiaB = () => {
+        // Entrenar al agente
+        RLAgent.AgenteB = new RLAgent(trainNB);
+        RLAgent.AgenteB.qRate = qRateB;
+
+        for (let i=0; i < trainNB; i++) {
+            RLAgent.AgenteB.reset(true);
+            RLAgent.AgenteB.updateAlpha(i);
+            RLAgent.AgenteB.jugarVsMinimax(estrategiaA, nivelA);
         }
     }
 
@@ -116,6 +140,10 @@ export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosPro
                             onClick={clickEntrenarAgenteA}
                             disabled={estrategiaA !== Estrategia.RLAgent}
                             className="ms-3">Entrenar RL</Button>
+					<Button variant="secondary"
+                            onClick={clickEntrenarAgentevsEstrategiaA}
+                            disabled={estrategiaA !== Estrategia.RLAgent || (estrategiaA == Estrategia.RLAgent && estrategiaB == Estrategia.RLAgent)}
+                            className="ms-3">Entrenar RL con Minimax</Button>
                 </Col>
             </Row>
         </Form>
@@ -172,6 +200,10 @@ export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosPro
                             onClick={clickEntrenarAgenteB}
                             disabled={estrategiaB !== Estrategia.RLAgent}
                             className="ms-3">Entrenar RL</Button>
+					<Button variant="secondary"
+                            onClick={clickEntrenarAgentevsEstrategiaB}
+                            disabled={estrategiaB !== Estrategia.RLAgent || (estrategiaA == Estrategia.RLAgent && estrategiaB == Estrategia.RLAgent)}
+                            className="ms-3">Entrenar RL con Minimax</Button>
                 </Col>
             </Row>
         </Form>

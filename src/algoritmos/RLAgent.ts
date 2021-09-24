@@ -1,6 +1,9 @@
 import {Ficha} from "../modelos/ficha";
 import Tablero from "../modelos/tablero";
 import {ficha2Resultado, Resultado} from "../modelos/resultado";
+import {Estrategia} from "../modelos/estrategia";
+import MinMax from "../algoritmos/MinMax";
+import AlfaBeta from "../algoritmos/AlfaBeta";
 
 export default class RLAgent {
     // Agente
@@ -204,6 +207,55 @@ export default class RLAgent {
                 }
             } else {
                 this.jugarRandom(contrario);
+            }
+
+            // actualizar resultado
+            this.gameResult = this.tablero.calcularResultado();
+            if (this.gameResult > 0) { // ya hay resultado
+                if (this.gameResult !== ficha2Resultado(jugador) && this.entrenar) { // perdimos, actualizar tablero
+                    this.updateProbability(this.lastTablero, this.calcularR(this.tablero, jugador), jugador);
+                }
+                break;
+            }
+
+            turno = 2 - turno + 1;
+            jugadas--;
+        } while (jugadas > 0);
+
+    }
+	
+	jugarVsMinimax(nivel: number, estrategia: Estrategia) {
+		let minimax;
+		
+		switch (estrategia) {
+			case Estrategia.Minimax:
+				minimax = new MinMax(nivel);
+				break
+			case Estrategia.Alfabeta:
+				minimax = new AlfaBeta(nivel);
+				break
+			default:
+				minimax = new MinMax(nivel);
+				break
+		}
+		
+        let jugador = this.jugadorAgente;
+		let contrario = (minimax.jugadorAgente % 2) + 1;
+        let turno = 1;
+        let jugadas = this.turnosMaximos;
+        let q;
+        do {
+            if (turno === jugador) {
+                q = Math.random();
+                if (q <= this.qRate || !this.entrenar) { // en train, juega basado en qrate
+                    this.jugarElitista(jugador);         // en validation, juega siempre elitista
+                } else {
+                    this.jugarRandom(jugador);
+                }
+            } else {
+				this.copiarTablero(this.tablero, minimax.tablero);
+				minimax.jugarElitista(contrario);
+				this.copiarTablero(minimax.tablero, this.tablero);
             }
 
             // actualizar resultado
