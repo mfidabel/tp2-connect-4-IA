@@ -142,7 +142,7 @@ export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosPro
                             className="ms-3">Entrenar RL</Button>
 					<Button variant="secondary"
                             onClick={clickEntrenarAgentevsEstrategiaA}
-                            disabled={estrategiaA !== Estrategia.RLAgent || (estrategiaA == Estrategia.RLAgent && estrategiaB == Estrategia.RLAgent)}
+                            disabled={estrategiaA !== Estrategia.RLAgent || (estrategiaA === Estrategia.RLAgent && estrategiaB === Estrategia.RLAgent)}
                             className="ms-3">Entrenar RL con Minimax</Button>
                 </Col>
             </Row>
@@ -202,7 +202,7 @@ export const Parametros = ({onElegirEstrategia, onLimpiarTablero}: ParametrosPro
                             className="ms-3">Entrenar RL</Button>
 					<Button variant="secondary"
                             onClick={clickEntrenarAgentevsEstrategiaB}
-                            disabled={estrategiaB !== Estrategia.RLAgent || (estrategiaA == Estrategia.RLAgent && estrategiaB == Estrategia.RLAgent)}
+                            disabled={estrategiaB !== Estrategia.RLAgent || (estrategiaA === Estrategia.RLAgent && estrategiaB === Estrategia.RLAgent)}
                             className="ms-3">Entrenar RL con Minimax</Button>
                 </Col>
             </Row>
